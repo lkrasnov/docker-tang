@@ -1,22 +1,24 @@
-FROM rockylinux/rockylinux:8.6.20220707
+FROM alpine:3.23
 
 ENV SUMMARY="Network Presence Binding Daemon." \
     DESCRIPTION="Tang is a small daemon for binding data to the presence of a third party. This is a containerized Tang server." \
     VERSION=1 \
     TANG_LISTEN_PORT=80
 
-LABEL name="stackhpc/tang" \
+LABEL name="lkrasnov/tang" \
       summary="${SUMMARY}" \
       description="${DESCRIPTION}" \
       version="${VERSION}" \
-      usage="podman run -d -p 8080:80 -v tang-keys:/var/db/tang --name tang stackhpc/tang"
+      usage="podman run -d -p 8080:80 -v tang-keys:/var/db/tang --name tang lkrasnov/tang"
 
-RUN dnf update -y && \
-    dnf install -y \
-             tang \
-             socat && \
-    dnf clean all && \
-    rm -rf /var/cache/yum
+# Add testing repo
+RUN echo "@testing https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
+
+RUN apk update && \
+    apk add --no-cache tang@testing socat@testing
+
+# Cleanup testing repo
+RUN sed -i "/testing/d" /etc/apk/repositories    
 
 COPY root /
 
