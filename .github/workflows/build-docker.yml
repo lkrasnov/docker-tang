@@ -10,7 +10,7 @@ on:
       - 'v*'
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: stackhpc/tang
+  IMAGE_NAME: lkrasnov/tang
 jobs:
   build-and-push-docker-image:
     runs-on: ubuntu-latest
